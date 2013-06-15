@@ -51,6 +51,9 @@ TEST_CASES = [
 class TestTennis < Test::Unit::TestCase
   def play_game(tennisGameClass, p1Points, p2Points, p1Name, p2Name)
     game = tennisGameClass.new(p1Name, p2Name)
+    # smell: we would like to not script the state,
+    # rather set the initial state to calculation, therefore need extra "calculator class"
+    # and afterwards move test to new class, leave only 1 integration test here  {}
     (0..[p1Points, p2Points].max).each do |i|
       if i < p1Points
         game.won_point(p1Name)
@@ -62,7 +65,7 @@ class TestTennis < Test::Unit::TestCase
     game
   end
 
-  def test_Score_Game1
+  def test_Score_Game
     TEST_CASES.each do |testcase|
       (p1Points, p2Points, score, p1Name, p2Name) = testcase
       game = play_game(TennisGame, p1Points, p2Points, p1Name, p2Name)
