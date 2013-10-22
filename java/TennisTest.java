@@ -1,13 +1,12 @@
-import static org.junit.Assert.*;
-
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
 public class TennisTest {
@@ -69,10 +68,12 @@ public class TennisTest {
     public void checkAllScores(TennisGame game) {
         int highestScore = Math.max(this.player1Score, this.player2Score);
         for (int i = 0; i < highestScore; i++) {
-            if (i < this.player1Score)
+            if (i < this.player1Score) {
                 game.wonPoint("player1");
-            if (i < this.player2Score)
+            }
+            if (i < this.player2Score) {
                 game.wonPoint("player2");
+            }
         }
         assertEquals(this.expectedScore, game.getScore());
     }
