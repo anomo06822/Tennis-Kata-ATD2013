@@ -15,10 +15,21 @@ namespace Tennis
 
         public void WonPoint(string playerName)
         {
-            if (playerName == "player1")
+            bool isPlayer = GetIsPlayer(ssssslayerName);
+           
+            if (isPlayer)
+            {
                 m_score1 += 1;
+            }
             else
+            {
                 m_score2 += 1;
+            }
+        }
+
+        private static bool GetIsPlayer(string playerName)
+        {
+            return playerName == "player1";
         }
 
         public string GetScore()

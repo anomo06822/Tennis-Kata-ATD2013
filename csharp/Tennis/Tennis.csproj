@@ -10,6 +10,17 @@
     <PackageReference Include="nunit" Version="3.10.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.2" />
+    <PackageReference Include="pickles" Version="2.20.1" />
+    <PackageReference Include="SpecFlow" Version="3.0.213" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Feature1.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+    </None>
+    <None Update="SpecFlowFeature1.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+    </None>
   </ItemGroup>
 
 </Project>
