@@ -1,3 +1,5 @@
+using System;
+
 namespace Tennis
 {
     class TennisGame1 : ITennisGame
@@ -36,58 +38,72 @@ namespace Tennis
             int m_score2 = tennisPlayer2.Score;
 
             string score = "";
-            if (IsSameScore(m_score1, m_score2))  
+            if (IsDeuce(m_score1, m_score2))
             {
-                score = GetScoreForSameScore(m_score1);
+                score = GetDeuce(m_score1, m_score2);
             }
-            else if (m_score1 >= 4 || m_score2 >= 4)
+            else if (IsAdvanture(m_score1, m_score2))
             {
-                var minusResult = m_score1 - m_score2;
-                
-                if (minusResult == 1) score = "Advantage player1";
-                else if (minusResult == -1) score = "Advantage player2";
-                else if (minusResult >= 2) score = "Win for player1";
-                else score = "Win for player2";
+                score = GetAdvantage(m_score1, m_score2);
+            }
+            else if (IsReadyToWon(m_score1, m_score2))
+            {
+                score = GetReadyToWon(m_score1, m_score2);
             }
             else
             {
-                score = GetScore(m_score1, m_score2);
+                score = GetInitial(m_score1, m_score2);
             }
             return score;
         }
 
-        private string GetScore(int score1, int score2)
+        private static string GetDeuce(int score1, int score2)
         {
-            return GetScoreBySingle(score1) + '-' + GetScoreBySingle(score2);
+            return "Deuce";
         }
 
-        private bool IsSameScore(int score1, int score2)
+        private static string GetReadyToWon(int score1, int score2)
+        {
+            return "Win for" + " " + (score1 > score2 ? "player1" : "player2");
+        }
+
+        private static string GetAdvantage(int score1, int score2)
+        {
+            return "Advantage" + " " + (score1 > score2 ? "player1" : "player2");
+        }
+
+        private string GetInitial(int score1, int score2)
+        {
+            string[] scores = new string[] { "Love", "Fifteen", "Thirty", "Forty" };
+
+            if (IsTie(score1, score2))
+            {
+                return scores[score1] + "-All";
+            }
+
+            return scores[score1] + '-' + scores[score2];
+        }
+
+        private static bool IsTie(int score1, int score2)
         {
             return score1 == score2;
         }
 
-        private static string GetScoreBySingle(int score)
+        private static bool IsDeuce(int score1, int score2)
         {
-            string[] scores = new string[] { "Love", "Fifteen", "Thirty", "Forty" };
-            return GetScoreWithDefault(scores, string.Empty, score);
+            return IsTie(score1, score2) && score1 >= 3;
         }
 
-        private string GetScoreForSameScore(int score)
+        private static bool IsReadyToWon(int score, int score2)
         {
-            string[] scores = new string[] { "Love-All", "Fifteen-All", "Thirty-All", "Deuce" };
-            return GetScoreWithDefault(scores, scores[scores.Length-1], score);
+            return (score >= 4 || score2 >= 4) && Math.Abs(score - score2) >= 2;
         }
 
-        private static string GetScoreWithDefault(string[] scores, string defaultValue, int score)
+        private static bool IsAdvanture(int score, int score2)
         {
-            if (scores == null)
-                throw new System.ArgumentNullException(nameof(scores));
-
-            if (score >= scores.Length)
-                return defaultValue;
-
-            return scores[score];
+            return (score >= 4 || score2 >= 4) && Math.Abs(score - score2) == 1;
         }
+
     }
 
     public class TennisPlayer
@@ -96,5 +112,10 @@ namespace Tennis
 
         public int Score { get; set; }
     }
+
+    ///1. isInitial
+    ///2. isDeuce
+    ///3. isWon
+    ///4. isAdvanture
 }
 
