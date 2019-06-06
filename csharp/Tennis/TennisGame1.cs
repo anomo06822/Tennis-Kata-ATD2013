@@ -76,10 +76,11 @@ namespace Tennis
 
             if (IsTie(score1, score2))
             {
-                return scores[score1] + "-All";
+                return $"{ scores[score1] }-All";
             }
 
-            return scores[score1] + '-' + scores[score2];
+            return $"{ scores[score1] }-{ scores[score2] }" ;
+                
         }
 
         private static bool IsTie(int score1, int score2)
