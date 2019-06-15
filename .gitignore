@@ -11,4 +11,3 @@ csharp/*.suo
 *.swp
 .DS_Store
 csharp/.vs
-.vs
