@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Tennis
 {
     class TennisGame1 : ITennisGame
@@ -6,6 +9,13 @@ namespace Tennis
         private int m_score2 = 0;
         private string player1Name;
         private string player2Name;
+        private Dictionary<int, string> scoreDic = new Dictionary<int, string>()
+        {
+            { 0, "Love" },
+            { 1, "Fifteen"},
+            { 2, "Thirty"},
+            { 3, "Forty"}
+        };
 
         public TennisGame1(string player1Name, string player2Name)
         {
@@ -23,60 +33,41 @@ namespace Tennis
 
         public string GetScore()
         {
-            string score = "";
-            var tempScore = 0;
-            if (m_score1 == m_score2)
+            List<KeyValuePair<Func<bool>, Func<string>>>handles = new List<KeyValuePair<Func<bool>, Func<string>>>()
             {
-                switch (m_score1)
-                {
-                    case 0:
-                        score = "Love-All";
-                        break;
-                    case 1:
-                        score = "Fifteen-All";
-                        break;
-                    case 2:
-                        score = "Thirty-All";
-                        break;
-                    default:
-                        score = "Deuce";
-                        break;
+                new KeyValuePair<Func<bool>, Func<string>>(IsDeuce, GetDeuce),
+                new KeyValuePair<Func<bool>, Func<string>>(IsAdvantage, GetAdvantage),
+                new KeyValuePair<Func<bool>, Func<string>>(IsWin, GetWin),
+                new KeyValuePair<Func<bool>, Func<string>>(IsInitial, GetNormalScore),
+            };
 
-                }
-            }
-            else if (m_score1 >= 4 || m_score2 >= 4)
+            foreach(var handle in handles)
             {
-                var minusResult = m_score1 - m_score2;
-                if (minusResult == 1) score = "Advantage player1";
-                else if (minusResult == -1) score = "Advantage player2";
-                else if (minusResult >= 2) score = "Win for player1";
-                else score = "Win for player2";
-            }
-            else
-            {
-                for (var i = 1; i < 3; i++)
+                if (handle.Key())
                 {
-                    if (i == 1) tempScore = m_score1;
-                    else { score += "-"; tempScore = m_score2; }
-                    switch (tempScore)
-                    {
-                        case 0:
-                            score += "Love";
-                            break;
-                        case 1:
-                            score += "Fifteen";
-                            break;
-                        case 2:
-                            score += "Thirty";
-                            break;
-                        case 3:
-                            score += "Forty";
-                            break;
-                    }
+                    return handle.Value();
                 }
             }
-            return score;
+
+            return string.Empty;
         }
+
+        private bool IsInitial() => true;
+
+        private bool IsDeuce() => IsSameScore() && m_score1 >= 3;
+        private bool IsSameScore() => m_score1 == m_score2;
+        private bool IsAdvantage() => IsReadyToWin() && AbsScore() == 1;
+        private bool IsWin() => IsReadyToWin() && AbsScore() >= 2;
+        private bool IsReadyToWin() => m_score1 >= 4 || m_score2 >= 4;
+
+        private static string GetDeuce() => "Deuce";
+        private string GetAdvantage() => $"Advantage { GetPlayer() }";
+        private string GetWin() => $"Win for { GetPlayer() }";
+        private string GetPlayer() => (m_score1 - m_score2 > 0 ? "player1" : "player2");
+        private string GetNormalScore() => IsSameScore() ? GetPlayerScore(m_score1) + "-All" : $"{ GetPlayerScore(m_score1) }-{ GetPlayerScore(m_score2) }";
+        private string GetPlayerScore(int tempScore) => scoreDic[tempScore];
+
+        private int AbsScore() => System.Math.Abs(m_score1 - m_score2);
     }
 }
 
