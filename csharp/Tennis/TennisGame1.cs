@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Tennis
 {
     class TennisGame1 : ITennisGame
@@ -24,58 +27,86 @@ namespace Tennis
         public string GetScore()
         {
             string score = "";
-            var tempScore = 0;
-            if (m_score1 == m_score2)
-            {
-                switch (m_score1)
-                {
-                    case 0:
-                        score = "Love-All";
-                        break;
-                    case 1:
-                        score = "Fifteen-All";
-                        break;
-                    case 2:
-                        score = "Thirty-All";
-                        break;
-                    default:
-                        score = "Deuce";
-                        break;
 
-                }
+            if (IsDeuce())
+            {
+                score = GetReuce();
             }
+
             else if (m_score1 >= 4 || m_score2 >= 4)
             {
-                var minusResult = m_score1 - m_score2;
-                if (minusResult == 1) score = "Advantage player1";
-                else if (minusResult == -1) score = "Advantage player2";
-                else if (minusResult >= 2) score = "Win for player1";
+                var minusResult = GetPointDiff();
+                if (IsAdvantage(minusResult))
+                {
+                    score = GetAdvantage(minusResult);
+                }
+                else if (IsWin(minusResult))
+                {
+                    score = GetWin(minusResult);
+                }
                 else score = "Win for player2";
             }
             else
             {
-                for (var i = 1; i < 3; i++)
+                if (IsSameScore())
                 {
-                    if (i == 1) tempScore = m_score1;
-                    else { score += "-"; tempScore = m_score2; }
-                    switch (tempScore)
-                    {
-                        case 0:
-                            score += "Love";
-                            break;
-                        case 1:
-                            score += "Fifteen";
-                            break;
-                        case 2:
-                            score += "Thirty";
-                            break;
-                        case 3:
-                            score += "Forty";
-                            break;
-                    }
+                    score = $"{ GetScore(m_score1)}-All";
                 }
+
+                score = GetScore(m_score1) + "-" + GetScore(m_score2);
             }
+
             return score;
+        }
+
+        private static string GetAdvantage(int minusResult)
+        {
+            return minusResult > 0 ? "Advantage player1" : "Advantage player2";
+        }
+
+        private int GetPointDiff()
+        {
+            return Math.Abs(m_score1 - m_score2);
+        }
+
+        private string GetWin(int minusResult)
+        {
+            return minusResult > 0 ? "Win for player1" : "Win for  player2";
+        }
+
+        private  bool IsWin(int minusResult)
+        {
+            return GetPointDiff() >= 2;
+        }
+
+        private  bool IsAdvantage(int minusResult)
+        {
+            return GetPointDiff() == 1;
+        }
+
+        private  string GetReuce()
+        {
+            return "Deuce";
+        }
+
+        private bool IsDeuce()
+        {
+            return IsSameScore() && m_score1 >= 3;
+        }
+
+        private bool IsSameScore()
+        {
+            return m_score1 == m_score2;
+        }
+
+        private static string GetScore(int tempScore)
+        {
+            Dictionary<int, string> scoreDic = new Dictionary<int, string>()
+            {
+                { 0, "Love" }, { 1, "Fifteen" }, { 2, "Thirty" }, { 3, "Forty" }
+            };
+
+            return scoreDic[tempScore];
         }
     }
 }
