@@ -46,7 +46,7 @@ namespace Tennis
 
                 }
             }
-            else if (m_score1 >= 4 || m_score2 >= 4)
+            else if (IsReadyToWon())
             {
                 var minusResult = m_score1 - m_score2;
                 if (minusResult == 1) score = "Advantage player1";
@@ -59,6 +59,11 @@ namespace Tennis
                 score += GetScore(m_score1) + "-" + GetScore(m_score2);
             }
             return score;
+        }
+
+        private bool IsReadyToWon()
+        {
+            return m_score1 >= 4 || m_score2 >= 4;
         }
 
         private static string GetScore(int tempScore)
