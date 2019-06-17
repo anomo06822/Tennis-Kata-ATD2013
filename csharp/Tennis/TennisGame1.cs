@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Tennis
@@ -8,6 +9,15 @@ namespace Tennis
         private int m_score2 = 0;
         private string player1Name;
         private string player2Name;
+
+        private bool IsDeuce() => IsTie() && m_score1 >= 3;
+
+        private static string GetDeuce() => "Deuce";
+        private string GetGameOver() => $"Win for {GetLeadingPlayer()}";
+        private string GetAdvantage() => $"Advantage {GetLeadingPlayer()}";
+        private string GetNormal() => IsTie() ? GetScore(m_score1) + "-All" : GetScore(m_score1) + "-" + GetScore(m_score2);
+
+
 
         public TennisGame1(string player1Name, string player2Name)
         {
@@ -26,52 +36,28 @@ namespace Tennis
         public string GetScore()
         {
             string score = "";
-            var tempScore = 0;
-            if (m_score1 == m_score2)
-            {
-                switch (m_score1)
-                {
-                    case 0:
-                        score = "Love-All";
-                        break;
-                    case 1:
-                        score = "Fifteen-All";
-                        break;
-                    case 2:
-                        score = "Thirty-All";
-                        break;
-                    default:
-                        score = "Deuce";
-                        break;
 
-                }
-            }
-            else if (IsReadyToWon())
+            if (IsDeuce())
             {
-                var minusResult = GetPointDiff();
-                if (minusResult == 1) score = "Advantage player1";
-                else if (minusResult == -1) score = "Advantage player2";
-                else if (minusResult >= 2) score = "Win for player1";
-                else score = "Win for player2";
+                score = GetDeuce();
+            }
+            else if (IsAdvantage())
+            {
+                score = GetAdvantage();
+            }
+            else if (IsGameOver())
+            {
+                score = GetGameOver();
             }
             else
             {
-                score += GetScore(m_score1) + "-" + GetScore(m_score2);
+                score = GetNormal();
             }
+
             return score;
         }
 
-        private int GetPointDiff()
-        {
-            return m_score1 - m_score2;
-        }
-
-        private bool IsReadyToWon()
-        {
-            return m_score1 >= 4 || m_score2 >= 4;
-        }
-
-        private static string GetScore(int tempScore)
+        private string GetScore(int tempScore)
         {
             Dictionary<int, string> scoreDic = new Dictionary<int, string>()
             {
@@ -84,6 +70,38 @@ namespace Tennis
             }
 
             return scoreDic[tempScore];
+        }
+
+
+        private bool IsTie()
+        {
+            return m_score1 == m_score2;
+        }
+
+
+        private bool IsGameOver()
+        {
+            return IsReadyToWon() && Math.Abs(GetPointDiff()) >= 2;
+        }
+
+        private bool IsAdvantage()
+        {
+            return IsReadyToWon() && Math.Abs(GetPointDiff()) == 1;
+        }
+
+        private string GetLeadingPlayer()
+        {
+            return GetPointDiff() > 0 ? "player1" : "player2";
+        }
+
+        private int GetPointDiff()
+        {
+            return m_score1 - m_score2;
+        }
+
+        private bool IsReadyToWon()
+        {
+            return m_score1 >= 4 || m_score2 >= 4;
         }
     }
 }
