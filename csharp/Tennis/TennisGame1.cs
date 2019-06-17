@@ -48,7 +48,7 @@ namespace Tennis
             }
             else if (IsReadyToWon())
             {
-                var minusResult = m_score1 - m_score2;
+                var minusResult = GetPointDiff();
                 if (minusResult == 1) score = "Advantage player1";
                 else if (minusResult == -1) score = "Advantage player2";
                 else if (minusResult >= 2) score = "Win for player1";
@@ -59,6 +59,11 @@ namespace Tennis
                 score += GetScore(m_score1) + "-" + GetScore(m_score2);
             }
             return score;
+        }
+
+        private int GetPointDiff()
+        {
+            return m_score1 - m_score2;
         }
 
         private bool IsReadyToWon()
